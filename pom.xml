@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>fr.esgi.spark</groupId>
+    <artifactId>training-spark</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <scala.version>2.11.8</scala.version>
+
+        <cassandra.connector.version>3.0.0</cassandra.connector.version>
+        <elasticsearch.connector.version>2.2.0</elasticsearch.connector.version>
+        <hadoop.version>2.7.1</hadoop.version>
+        <jackson.version>2.7.2</jackson.version>
+        <joda-convert.version>1.8.1</joda-convert.version>
+        <joda-time.version>2.9.2</joda-time.version>
+        <langdetect.version>1.1-20120112</langdetect.version>
+        <maven.compiler.plugin>3.0</maven.compiler.plugin>
+        <maven.dependency.plugin>2.6</maven.dependency.plugin>
+        <maven.source.plugin>2.2.1</maven.source.plugin>
+        <maven-scala-plugin.version>2.15.2</maven-scala-plugin.version>
+        <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
+        <scala.dep.version>2.11</scala.dep.version>
+        <scalatest.version>3.0.0-M12</scalatest.version>
+        <scala-maven-plugin.version>3.2.0</scala-maven-plugin.version>
+        <scoverage-maven-plugin.version>1.1.0</scoverage-maven-plugin.version>
+        <spark.version>2.4.3</spark.version>
+        <spark-csv.version>1.4.0</spark-csv.version>
+        <spark.cassandra.connector.version>2.0.2</spark.cassandra.connector.version>
+        <play-json.version>2.4.6</play-json.version>
+    </properties>
+<dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-mllib_${scala.dep.version}</artifactId>
+    <version>${spark.version}</version>
+</dependency>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_${scala.dep.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-mllib_${scala.dep.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_${scala.dep.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-convert</artifactId>
+            <version>${joda-convert.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.datastax.spark</groupId>
+            <artifactId>spark-cassandra-connector_${scala.dep.version}</artifactId>
+            <version>${spark.cassandra.connector.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+            <version>${cassandra.connector.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch-spark_${scala.dep.version}</artifactId>
+            <version>${elasticsearch.connector.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spark-sql_${scala.dep.version}</artifactId>
+                    <groupId>org.apache.spark</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-scala_${scala.dep.version}</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cybozu.labs</groupId>
+            <artifactId>langdetect</artifactId>
+            <version>${langdetect.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>${maven-shade-plugin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.dep.version}</artifactId>
+            <version>${scalatest.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-json_${scala.dep.version}</artifactId>
+            <version>${play-json.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>uber-jar</id>
+
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>${maven-shade-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                                    <relocations>
+                                        <relocation>
+                                            <pattern>com.google</pattern>
+                                            <shadedPattern>shaded.com.google</shadedPattern>
+                                        </relocation>
+                                    </relocations>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-core_${scala.dep.version}</artifactId>
+                    <version>${spark.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-mllib_${scala.dep.version}</artifactId>
+                    <version>${spark.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-sql_${scala.dep.version}</artifactId>
+                    <version>${spark.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+
+            </dependencies>
+        </profile>
+    </profiles>
+
+</project>
